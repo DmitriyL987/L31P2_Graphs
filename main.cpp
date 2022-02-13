@@ -19,6 +19,7 @@ int main() {
 
     IGraph *c = new ListGraph(a);
     IGraph *b = new MatrixGraph(c);
+    IGraph *ba = a;
 
     int x,y,z;
     x = a->VerticesCount();
@@ -30,7 +31,8 @@ int main() {
 
     std::cout << "Количество вершин в списке после копирования списка в матрицу = " << z << std::endl;
     auto s = dynamic_cast<MatrixGraph*>(a);
-    auto k = dynamic_cast<MatrixGraph*>(a);
+    auto k = dynamic_cast<MatrixGraph*>(b);
+    auto ka = dynamic_cast<MatrixGraph*>(ba);
     auto l = dynamic_cast<ListGraph*>(c);
     for (int i =0; i < s->matrix.size(); ++i) {
         //  матрица а
@@ -41,6 +43,11 @@ int main() {
         //  матрица b
         for (int j = 0; j < k->matrix[i].size(); ++j) {
             std::cout << k->matrix[i][j] << "  ";
+        }
+        std::cout << "\t";
+        //  матрица ba
+        for (int j = 0; j < ka->matrix[i].size(); ++j) {
+            std::cout << ka->matrix[i][j] << "  ";
         }
         std::cout << "\t";
         //  список c
