@@ -10,11 +10,13 @@ class ListGraph;
 
 class IGraph {
   public:
-    ~IGraph() {}
+    virtual  ~IGraph() {};
 
-    IGraph() {};
 
-    explicit  IGraph(IGraph *oth);
+    IGraph(IGraph *oth);
+
+    IGraph() {}
+
     // Метод принимает вершины начала и конца ребра и добавляет ребро
     virtual void AddEdge(int from, int to) = 0;
     // Метод должен считать текущее количество вершин
@@ -29,7 +31,7 @@ class MatrixGraph: public IGraph{
 
 
   public:
-    MatrixGraph(){ matrix.resize(1); matrix[0].resize(1);}
+    MatrixGraph(){ };
     explicit MatrixGraph(IGraph *oth);
     virtual void AddEdge(int from, int to) override;
     virtual int VerticesCount() override;
@@ -37,13 +39,14 @@ class MatrixGraph: public IGraph{
     virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) override;
     MatrixGraph& operator=(const MatrixGraph& oth);
     MatrixGraph& operator=(const ListGraph& oth);
+    MatrixGraph* operator=(IGraph* oth);
 
     std::vector<std::vector<bool>> matrix;
 };
 //-------------------------------------------------------
 class ListGraph : public  IGraph{
   public:
-    ListGraph(){ list.resize(1); list[0].resize(1);}
+    ListGraph(){};
     explicit ListGraph(IGraph *oth);
     virtual void AddEdge(int from, int to) override;
     virtual int VerticesCount() override;
@@ -51,6 +54,7 @@ class ListGraph : public  IGraph{
     virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) override;
     ListGraph& operator=(const MatrixGraph& oth);
     ListGraph& operator=(const ListGraph& oth);
+    ListGraph& operator=(IGraph* oth);
 
     std::vector<std::vector<int>> list;
 };

@@ -16,16 +16,38 @@ int main() {
         std::cin >> from >> to;
         a->AddEdge(from, to);
     }
+
     IGraph *c = new ListGraph(a);
-    IGraph *b = new MatrixGraph;
-    *b = *c;
+    IGraph *b = new MatrixGraph(c);
+
     int x,y,z;
     x = a->VerticesCount();
     y = c->VerticesCount();
     z = b->VerticesCount();
+
     std::cout << "Количество вершин в списке до копирования = " << x << std::endl;
     std::cout << "Количество вершин в списке после копирования матрицы в список = " << y << std::endl;
 
     std::cout << "Количество вершин в списке после копирования списка в матрицу = " << z << std::endl;
+    auto s = dynamic_cast<MatrixGraph*>(a);
+    auto k = dynamic_cast<MatrixGraph*>(a);
+    auto l = dynamic_cast<ListGraph*>(c);
+    for (int i =0; i < s->matrix.size(); ++i) {
+        //  матрица а
+        for (int j = 0; j < s->matrix[i].size(); ++j) {
+            std::cout << s->matrix[i][j] << "  ";
+        }
+        std::cout << "\t";
+        //  матрица b
+        for (int j = 0; j < k->matrix[i].size(); ++j) {
+            std::cout << k->matrix[i][j] << "  ";
+        }
+        std::cout << "\t";
+        //  список c
+        for (int j = 0; j < l->list[i].size(); ++j)
+                std::cout << l->list[i][j] << " ";
+        std::cout << std::endl;
+    }
+
     return 0;
 }

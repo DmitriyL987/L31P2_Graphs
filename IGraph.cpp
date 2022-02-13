@@ -1,11 +1,12 @@
 #include "IGraph.h"
 //----------------- MatrixGraph -------------
 
-MatrixGraph& MatrixGraph:: operator=(const MatrixGraph& oth){
+MatrixGraph& MatrixGraph::operator=(const MatrixGraph& oth){
     std::cout << "MatrixGraph& MatrixGraph:: operator=(const MatrixGraph& oth)" << std::endl;
+    if(this == &oth) return *this;
     matrix.clear();
     matrix.resize(oth.matrix.size());
-    for(int i = 0; i < matrix.size(); ++i){
+    for(int i = 0; i < oth.matrix.size(); ++i){
         matrix[i].resize(oth.matrix[i].size());
         for (int j = 0; j < oth.matrix.size(); ++j){
             matrix[i][j] = oth.matrix[i][j];
@@ -16,11 +17,12 @@ MatrixGraph& MatrixGraph:: operator=(const MatrixGraph& oth){
 MatrixGraph& MatrixGraph::operator=(const ListGraph& oth){
     std::cout << "MatrixGraph& MatrixGraph::operator=(const ListGraph& oth)" << std::endl;
     int a = oth.list.size();
+    matrix.clear();
     matrix.resize(a);
     for(int i = 0; i < matrix.size(); ++i){
         matrix[i].resize(a);
         for (int j = 0; j < oth.list[i].size(); ++j) {
-            matrix[i].emplace((matrix[i].begin()+oth.list[i][j]), true);
+            matrix[i][oth.list[i][j]] = true;
         }
     }
     return  *this;
@@ -29,10 +31,10 @@ MatrixGraph& MatrixGraph::operator=(const ListGraph& oth){
 MatrixGraph::MatrixGraph(IGraph *oth) {
     std::cout << "MatrixGraph::MatrixGraph(IGraph *oth)" ;
     if(auto *ms = dynamic_cast<MatrixGraph*>(oth); ms != nullptr){
-        std::cout << " IGraph *oth Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÐµÐ½ ÐºÐ°Ðº Ð¼Ð°Ñ‚Ñ€Ð¸Ñ†Ð°" << std::endl;
+        std::cout << " IGraph *oth - îïðåäåëåí êàê ìàòðèöà" << std::endl;
         *this = *ms;
     } else if (auto ls = dynamic_cast<ListGraph*>(oth); ls != nullptr){
-        std::cout << " IGraph *oth Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÐµÐ½ ÐºÐ°Ðº ÑÐ¿Ð¸ÑÐ¾Ðº" << std::endl;
+        std::cout << " IGraph *oth îïðåäåëåí êàê ñïèñîê" << std::endl;
         *this = *ls;
     }
 }
@@ -42,31 +44,27 @@ void MatrixGraph::AddEdge(int from, int to) {
         std::cerr << "Error. Edge not created" << std::endl;
         return;
     }
-    int a = std::max(from,to);
-    ++a;
+    int a = std::max(from, to) + 1;
+
     if (a > matrix.size()) {
         matrix.resize(a);
-        for (int i = 0; i < a; ++i) matrix[i].resize(a);
+        for (int i = 0; i < matrix.size(); ++i) {
+            matrix[i].resize(a);
+        }
     }
-    matrix[from].emplace(matrix[from].begin()+ to, true);
+    matrix[from][to] = true;
 }
 
 int MatrixGraph::VerticesCount() {
-    int countVertices = 0;
-    int matrixsize = matrix.size();
-    for (int i = 0; i < matrixsize; ++i){
-        for(int j = 0; j < matrixsize; ++j){
-            if(i == j) continue; // Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ° Ð½Ð° Ð¿ÐµÑ‚Ð»ÑŽ
-            if (matrix[i][j] != matrix[j][i]) { // Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ° Ð½Ð° Ð¾Ñ€Ð¸ÐµÐ½Ñ‚Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð½Ð¾ÑÑ‚ÑŒ
-                if(matrix[i][j]) {
-                    if(countVertices != 0) countVertices += 1;
-                    else countVertices += 2;
-                    break; // Ð²Ñ‹Ñ…Ð¾Ð´Ð¸Ð¼ Ð¸Ð· Ð²Ð»Ð¾Ð¶ÐµÐ½Ð½Ð¾Ð³Ð¾ Ñ†Ð¸ÐºÐ»Ð° ÑÑ€Ð°Ð·Ñƒ ÐºÐ°Ðº Ð½Ð°Ð¹Ð´Ñ‘Ð¼ Ñ€ÐµÐ±Ñ€Ð¾ - Ð·Ð½Ð°Ñ‡Ð¸Ñ‚ Ð²ÐµÑ€ÑˆÐ¸Ð½Ð° Ð½Ðµ Ð²Ð¸ÑÑÑ‡Ð°Ñ
-                }
-            }
+   int countVertices = matrix.size();
+    for(int i = 0; i < matrix.size(); ++i){
+        int v = 0 , h = 0;
+        for(int j = 0; j < matrix.size(); ++j) {
+            if (matrix[i][j]) {++h; break;}
+            if (matrix[j][i]) {++v; break;}
         }
+        if (h == 0 && v == 0) --countVertices;
     }
-    std::cout << "int MatrixGraph::VerticesCount()" << std::endl;
     return countVertices;
 }
 
@@ -88,6 +86,32 @@ void MatrixGraph::GetPrevVertices(int vertex, std::vector<int> &vertices) {
         }
     }
     std::cout << std::endl;
+}
+
+MatrixGraph* MatrixGraph::operator=(IGraph *oth) {
+    if(auto *ms = dynamic_cast<MatrixGraph*>(oth); ms != nullptr){
+        std::cout << "IGraph *oth îïðåäåëåí êàê ìàòðèöà"  << std::endl;
+        matrix.clear();
+        matrix.resize(ms->matrix.size());
+        for(int i = 0; i < matrix.size(); ++i){
+            matrix[i].resize(ms->matrix[i].size());
+            for (int j = 0; j < ms->matrix.size(); ++j){
+                matrix[i][j] = ms->matrix[i][j];
+            }
+        }
+    } else if (auto ls = dynamic_cast<ListGraph*>(oth); ls != nullptr){
+        std::cout << "IGraph *oth îïðåäåëåí êàê ìàòðèöà"  << std::endl;
+        int a = ls->list.size();
+        matrix.clear();
+        matrix.resize(a);
+        for(int i = 0; i < matrix.size(); ++i){
+            matrix[i].resize(a);
+            for (int j = 0; j < ls->list[i].size(); ++j) {
+                matrix[i][ls->list[i][j]] = true;
+            }
+        }
+    }
+    return this;
 }
 
 //-------------------------- ListGraph --------------
@@ -120,10 +144,10 @@ ListGraph& ListGraph::operator=(const MatrixGraph &oth) {
 ListGraph::ListGraph(IGraph* oth) {
     std::cout << "ListGraph::ListGraph(IGraph* oth)" ;
     if(auto *ms = dynamic_cast<MatrixGraph*>(oth); ms != nullptr){
-        std::cout << " IGraph *oth Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÐµÐ½ ÐºÐ°Ðº Ð¼Ð°Ñ‚Ñ€Ð¸Ñ†Ð°" << std::endl;
+        std::cout << " IGraph *oth îïðåäåëåí êàê ìàòðèöà" << std::endl;
         *this = *ms;
     } else if (auto ls = dynamic_cast<ListGraph*>(oth); ls != nullptr){
-        std::cout << " IGraph *oth Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÐµÐ½ ÐºÐ°Ðº ÑÐ¿Ð¸ÑÐ¾Ðº" << std::endl;
+        std::cout << " IGraph *oth îïðåäåëåí êàê ñïèñîê" << std::endl;
         *this = *ls;
     }
 }
@@ -133,6 +157,7 @@ void ListGraph::AddEdge(int from, int to) {
         std::cerr << "Error. Edge not created" << std::endl;
         return;
     }
+
     if(from > list.size()) {
         list.resize(from);
     }
@@ -140,18 +165,9 @@ void ListGraph::AddEdge(int from, int to) {
 }
 
 int ListGraph::VerticesCount() {
-    int countVertices = 0;
-    for(int i = 0; i < list.size(); ++i) {
-        for(int j = 0; j < list[i].size(); ++j){
-            if( list[i][j] != i ) {
-                for (int s = 0; s < list[list[i][j]].size(); ++s) {
-                    if (list[list[i][j]][s] != i) countVertices += list[i].size();
-                }
-            }
-        }
-    }
-    std::cout << "int ListGraph::VerticesCount()" << std::endl;
-    return countVertices;
+    int count = 0;
+    for(int i = 0; i < list.size(); ++i) count += list[i].size();
+    return count;
 }
 
 void ListGraph::GetNextVertices(int vertex, std::vector<int> &vertices) {
@@ -168,6 +184,30 @@ void ListGraph::GetPrevVertices(int vertex, std::vector<int> &vertices) {
             if(list[i][j] == vertex) vertices.push_back(i);
         }
     }
+}
+
+ListGraph &ListGraph::operator=(IGraph* oth) {
+    if(auto * ms = dynamic_cast<MatrixGraph*>(oth); ms != nullptr){
+        std::cout << "ListGraph& ListGraph::operator=(const MatrixGraph &oth) 2" << std::endl;
+        list.clear();
+        list.resize(ms->matrix.size());
+        for (int i = 0; i < list.size(); ++i) {
+            for (int j = 0; j < ms->matrix[i].size(); ++j){
+                if (ms->matrix[i][j]) list[i].emplace_back(j);
+            }
+        }
+    }else if(auto * ls = dynamic_cast<ListGraph*>(oth); ls != nullptr){
+        std::cout << "ListGraph& ListGraph::operator=(const ListGraph &oth) 2" << std::endl;
+        list.clear();
+        list.resize(ls->list.size());
+        for (int i = 0; i < list.size(); ++i) {
+            list[i].resize(ls->list[i].size());
+            for (int j = 0; j < ls->list[i].size(); ++j){
+                list[i][j]=ls->list[i][j];
+            }
+        }
+    }
+    return *this;
 }
 
 
