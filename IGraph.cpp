@@ -2,7 +2,6 @@
 //----------------- MatrixGraph -------------
 
 MatrixGraph& MatrixGraph::operator=(const MatrixGraph& oth){
-    std::cout << "MatrixGraph& MatrixGraph:: operator=(const MatrixGraph& oth)" << std::endl;
     if(this == &oth) return *this;
     matrix.clear();
     matrix.resize(oth.matrix.size());
@@ -15,7 +14,6 @@ MatrixGraph& MatrixGraph::operator=(const MatrixGraph& oth){
     return *this;
 }
 MatrixGraph& MatrixGraph::operator=(const ListGraph& oth){
-    std::cout << "MatrixGraph& MatrixGraph::operator=(const ListGraph& oth)" << std::endl;
     int a = oth.list.size();
     matrix.clear();
     matrix.resize(a);
@@ -29,12 +27,9 @@ MatrixGraph& MatrixGraph::operator=(const ListGraph& oth){
 }
 
 MatrixGraph::MatrixGraph(IGraph *oth) {
-    std::cout << "MatrixGraph::MatrixGraph(IGraph *oth)" ;
     if(auto *ms = dynamic_cast<MatrixGraph*>(oth); ms != nullptr){
-        std::cout << " IGraph *oth - определен как матрица" << std::endl;
         *this = *ms;
     } else if (auto ls = dynamic_cast<ListGraph*>(oth); ls != nullptr){
-        std::cout << " IGraph *oth определен как список" << std::endl;
         *this = *ls;
     }
 }
@@ -56,7 +51,7 @@ void MatrixGraph::AddEdge(int from, int to) {
 }
 
 int MatrixGraph::VerticesCount() {
-   int countVertices = matrix.size();
+    int countVertices = matrix.size();
     for(int i = 0; i < matrix.size(); ++i){
         int v = 0 , h = 0;
         for(int j = 0; j < matrix.size(); ++j) {
@@ -90,7 +85,6 @@ void MatrixGraph::GetPrevVertices(int vertex, std::vector<int> &vertices) {
 
 MatrixGraph* MatrixGraph::operator=(IGraph *oth) {
     if(auto *ms = dynamic_cast<MatrixGraph*>(oth); ms != nullptr){
-        std::cout << "IGraph *oth определен как матрица"  << std::endl;
         matrix.clear();
         matrix.resize(ms->matrix.size());
         for(int i = 0; i < matrix.size(); ++i){
@@ -100,7 +94,6 @@ MatrixGraph* MatrixGraph::operator=(IGraph *oth) {
             }
         }
     } else if (auto ls = dynamic_cast<ListGraph*>(oth); ls != nullptr){
-        std::cout << "IGraph *oth определен как матрица"  << std::endl;
         int a = ls->list.size();
         matrix.clear();
         matrix.resize(a);
@@ -144,10 +137,8 @@ ListGraph& ListGraph::operator=(const MatrixGraph &oth) {
 ListGraph::ListGraph(IGraph* oth) {
     std::cout << "ListGraph::ListGraph(IGraph* oth)" ;
     if(auto *ms = dynamic_cast<MatrixGraph*>(oth); ms != nullptr){
-        std::cout << " IGraph *oth определен как матрица" << std::endl;
         *this = *ms;
     } else if (auto ls = dynamic_cast<ListGraph*>(oth); ls != nullptr){
-        std::cout << " IGraph *oth определен как список" << std::endl;
         *this = *ls;
     }
 }
@@ -157,17 +148,15 @@ void ListGraph::AddEdge(int from, int to) {
         std::cerr << "Error. Edge not created" << std::endl;
         return;
     }
-
-    if(from > list.size()) {
-        list.resize(from);
+    int a = std::max(from, to) + 1;
+    if(a > list.size()) {
+        list.resize(a);
     }
     list[from].push_back(to);
 }
 
-int ListGraph::VerticesCount() {
-    int count = 0;
-    for(int i = 0; i < list.size(); ++i) count += list[i].size();
-    return count;
+int ListGraph::VerticesCount(){
+    return list.size();
 }
 
 void ListGraph::GetNextVertices(int vertex, std::vector<int> &vertices) {
@@ -186,18 +175,16 @@ void ListGraph::GetPrevVertices(int vertex, std::vector<int> &vertices) {
     }
 }
 
-ListGraph &ListGraph::operator=(IGraph* oth) {
+ListGraph *ListGraph::operator=(IGraph* oth) {
     if(auto * ms = dynamic_cast<MatrixGraph*>(oth); ms != nullptr){
-        std::cout << "ListGraph& ListGraph::operator=(const MatrixGraph &oth) 2" << std::endl;
         list.clear();
         list.resize(ms->matrix.size());
         for (int i = 0; i < list.size(); ++i) {
             for (int j = 0; j < ms->matrix[i].size(); ++j){
-                if (ms->matrix[i][j]) list[i].emplace_back(j);
+                if (ms->matrix[i][j]) list[i].push_back(j);
             }
         }
     }else if(auto * ls = dynamic_cast<ListGraph*>(oth); ls != nullptr){
-        std::cout << "ListGraph& ListGraph::operator=(const ListGraph &oth) 2" << std::endl;
         list.clear();
         list.resize(ls->list.size());
         for (int i = 0; i < list.size(); ++i) {
@@ -207,13 +194,5 @@ ListGraph &ListGraph::operator=(IGraph* oth) {
             }
         }
     }
-    return *this;
+    return this;
 }
-
-
-
-
-
-
-
-

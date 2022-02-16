@@ -9,14 +9,16 @@ class MatrixGraph;
 class ListGraph;
 
 class IGraph {
+    std::string name;
   public:
     virtual  ~IGraph() {};
 
 
+    IGraph() {name = "some_graph";}
+
     IGraph(IGraph *oth);
 
-    IGraph() {}
-
+    virtual std::string& getName(){return name;}
     // Метод принимает вершины начала и конца ребра и добавляет ребро
     virtual void AddEdge(int from, int to) = 0;
     // Метод должен считать текущее количество вершин
@@ -28,15 +30,13 @@ class IGraph {
 };
 //-----------------------------------------------------
 class MatrixGraph: public IGraph{
-
-
   public:
-    MatrixGraph(){ };
-    explicit MatrixGraph(IGraph *oth);
-    virtual void AddEdge(int from, int to) override;
-    virtual int VerticesCount() override;
-    virtual void GetNextVertices(int vertex, std::vector<int> &vertices) override;
-    virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) override;
+    MatrixGraph(){};
+    MatrixGraph(IGraph *oth);
+    void AddEdge(int from, int to) override;
+    int VerticesCount() override;
+    void GetNextVertices(int vertex, std::vector<int> &vertices) override;
+    void GetPrevVertices(int vertex, std::vector<int> &vertices) override;
     MatrixGraph& operator=(const MatrixGraph& oth);
     MatrixGraph& operator=(const ListGraph& oth);
     MatrixGraph* operator=(IGraph* oth);
@@ -47,14 +47,14 @@ class MatrixGraph: public IGraph{
 class ListGraph : public  IGraph{
   public:
     ListGraph(){};
-    explicit ListGraph(IGraph *oth);
-    virtual void AddEdge(int from, int to) override;
-    virtual int VerticesCount() override;
-    virtual void GetNextVertices(int vertex, std::vector<int> &vertices) override;
-    virtual void GetPrevVertices(int vertex, std::vector<int> &vertices) override;
+    ListGraph(IGraph *oth);
+    void AddEdge(int from, int to) override;
+    int VerticesCount() override;
+    void GetNextVertices(int vertex, std::vector<int> &vertices) override;
+    void GetPrevVertices(int vertex, std::vector<int> &vertices) override;
     ListGraph& operator=(const MatrixGraph& oth);
     ListGraph& operator=(const ListGraph& oth);
-    ListGraph& operator=(IGraph* oth);
+    ListGraph* operator=(IGraph* oth);
 
     std::vector<std::vector<int>> list;
 };
