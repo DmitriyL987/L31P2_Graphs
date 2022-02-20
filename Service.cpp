@@ -40,7 +40,7 @@ void CreateCopy(std::vector <IGraph*> &igraph){
     if (n >= 0 && n < igraph.size()){
         IGraph* a(igraph[n]);
         igraph.push_back(a);
-        std::cout << "create complete IGraph № " << igraph.size() << std::endl;
+        std::cout << "create complete IGraph № " << igraph.size()-1 << std::endl;
     } else std::cout << "The graph has not been created,"
                      <<" the number does not exist" << std::endl;
 }
@@ -109,7 +109,7 @@ void Prev(std::vector <IGraph*> &igraph){
     if((n >=0 && n < igraph.size()) && v >= 0 && v < igraph[n]->VerticesCount()){
         igraph[n]->GetPrevVertices(v, result);
 
-        std::cout << "All preceding " << n << " vertices:" << std::endl;
+        std::cout << "All preceding " << v << " vertices:" << std::endl;
         for (int i = 0; i < result.size(); ++i){
             std::cout << result[i] << " ";
         }
@@ -125,7 +125,7 @@ void Next(std::vector <IGraph*> &igraph){
     if((n >=0 && n < igraph.size()) && v >= 0 && v < igraph[n]->VerticesCount()){
         igraph[n]->GetNextVertices(v, result);
 
-        std::cout << "all subsequent " << n << " vertices:" << std::endl;
+        std::cout << "all subsequent " << v << " vertices:" << std::endl;
         for (int i = 0; i < result.size(); ++i){
             std::cout << result[i] << " ";
         }
